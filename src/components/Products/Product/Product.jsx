@@ -1,5 +1,5 @@
 import { MdOutlineAddShoppingCart } from 'react-icons/md';
-import { HiOutlineShoppingCart } from 'react-icons/hi2';
+import parse from 'html-react-parser';
 
 const Product = ({ product }) => {
   return (
@@ -7,17 +7,17 @@ const Product = ({ product }) => {
       <div className='flex flex-col'>
         <img
           className='object-cover max-h-[240px] mb-4 rounded-tr-lg rounded-tl-lg'
-          src={product.image}
+          src={product.image.url}
           alt={product.name}
         />
         <div className='flex justify-between px-8'>
           <p className='font-semibold text-xl text-slate-800'>{product.name}</p>
           <p className='font-semibold text-xl text-slate-800'>
-            {product.price}
+            {product.price.formatted_with_symbol}
           </p>
         </div>
-        <p className='px-8 pt-2 font-normal text-slate-500 text-base'>
-          {product.description}
+        <p className='px-8 pt-2 font-normal text-slate-500 text-sm'>
+          {parse(product.description)}
         </p>
       </div>
       <button aria-label='Add to cart' className='self-end px-8'>

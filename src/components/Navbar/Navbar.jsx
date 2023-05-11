@@ -3,7 +3,7 @@ import logo from '../../assets/image/commerce.png';
 import { MdOutlineShoppingCart } from 'react-icons/md';
 
 const Navbar = () => {
-  const [count, setCount] = useState(54);
+  const [count, setCount] = useState(4);
   return (
     <div className='h-16 mb-6 flex items-center px-4 bg-white w-full rounded-lg'>
       <div className='flex items-center justify-between w-full pr-4'>
