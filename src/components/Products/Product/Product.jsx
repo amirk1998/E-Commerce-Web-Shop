@@ -1,7 +1,7 @@
 import { MdOutlineAddShoppingCart } from 'react-icons/md';
 import parse from 'html-react-parser';
 
-const Product = ({ product }) => {
+const Product = ({ product, onAddToCart }) => {
   return (
     <div className='flex flex-col w-[400px] h-[370px] justify-between border border-slate-300 rounded-lg shadow-sm hover:shadow-2xl hover:border-slate-400 hover:rounded-lg pb-4'>
       <div className='flex flex-col'>
@@ -16,11 +16,15 @@ const Product = ({ product }) => {
             {product.price.formatted_with_symbol}
           </p>
         </div>
-        <p className='px-8 pt-2 font-normal text-slate-500 text-sm'>
+        <div className='px-8 pt-2 font-normal text-slate-500 text-sm'>
           {parse(product.description)}
-        </p>
+        </div>
       </div>
-      <button aria-label='Add to cart' className='self-end px-8'>
+      <button
+        onClick={onAddToCart}
+        aria-label='Add to cart'
+        className='self-end px-8'
+      >
         <MdOutlineAddShoppingCart className='text-slate-500 hover:text-slate-900 w-6 h-6' />
       </button>
     </div>
