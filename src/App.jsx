@@ -29,7 +29,7 @@ function App() {
   };
 
   const handleRemoveFromCart = async (productId) => {
-    const { cart } = await commerce.cart.delete(productId);
+    const { cart } = await commerce.cart.remove(productId);
     setCart(cart);
   };
 
