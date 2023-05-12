@@ -23,17 +23,32 @@ function App() {
     setCart(item.cart);
   };
 
+  const handleUpdateCartQty = async (productId, quantity) => {
+    const { cart } = await commerce.cart.update(productId, { quantity });
+    setCart(cart);
+  };
+
+  const handleRemoveFromCart = async (productId) => {
+    const { cart } = await commerce.cart.delete(productId);
+    setCart(cart);
+  };
+
+  const handleEmptyCart = async () => {
+    const { cart } = await commerce.cart.empty();
+    setCart(cart);
+  };
+
   useEffect(() => {
     fetchProducts();
     fetchCart();
   }, []);
 
   // console.log(products);
-  console.log('cart', cart);
+  console.log(cart);
 
   return (
     <div className='App w-full h-full bg-gray-100 px-8 py-4'>
-      <Navbar totalItems={cart?.total_items} />
+      <Navbar totalItems={cart?.total_unique_items} />
       <Routes>
         <Route
           path='/'
@@ -41,7 +56,17 @@ function App() {
             <Products products={products} onAddToCart={handleAddToCart} />
           }
         />
-        <Route path='/cart' element={<Cart cart={cart} />} />
+        <Route
+          path='/cart'
+          element={
+            <Cart
+              cart={cart}
+              handleUpdateCartQty={handleUpdateCartQty}
+              handleRemoveFromCart={handleRemoveFromCart}
+              handleEmptyCart={handleEmptyCart}
+            />
+          }
+        />
       </Routes>
     </div>
   );
