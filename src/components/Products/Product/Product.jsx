@@ -3,7 +3,7 @@ import parse from 'html-react-parser';
 
 const Product = ({ product, onAddToCart }) => {
   return (
-    <div className='flex flex-col w-[400px] h-[370px] justify-between border border-slate-300 rounded-lg shadow-sm hover:shadow-2xl hover:border-slate-400 hover:rounded-lg pb-4'>
+    <div className='flex flex-col w-[325px] md:w-[400px] md:h-[370px] justify-between border border-slate-300 rounded-lg shadow-sm hover:shadow-2xl hover:border-slate-400 hover:rounded-lg pb-4'>
       <div className='flex flex-col'>
         <img
           className='object-cover max-h-[230px] mb-4 rounded-tr-lg rounded-tl-lg'
