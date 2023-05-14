@@ -1,6 +1,6 @@
 import Select from 'react-select';
 
-const FormSelect = ({ name, label, options, value, onChange }) => {
+const FormSelect = ({ name, label, options, onChange }) => {
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -22,7 +22,6 @@ const FormSelect = ({ name, label, options, value, onChange }) => {
       <Select
         className='basic-single'
         classNamePrefix='select'
-        value={value}
         isDisabled={false}
         isLoading={true}
         isClearable={false}
