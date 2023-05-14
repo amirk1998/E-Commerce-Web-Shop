@@ -1,10 +1,12 @@
 import Select from 'react-select';
 
-const FormSelect = ({ name, label, options, defaultValue }) => {
+const FormSelect = ({ name, label, options, value, onChange }) => {
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
       background: '#f3f4f6',
+      borderWidth: '2px',
+      borderColor: state.isFocused ? '#3b82f6' : '#d1d5db',
       // color: '#f3f4f6',
     }),
   };
@@ -13,14 +15,14 @@ const FormSelect = ({ name, label, options, defaultValue }) => {
     <div className='flex flex-col'>
       <label
         htmlFor={name}
-        className='block text-lg font-medium text-slate-800'
+        className='block text-lg font-medium text-slate-800 mb-2'
       >
         {label}
       </label>
       <Select
         className='basic-single'
         classNamePrefix='select'
-        defaultValue={defaultValue}
+        value={value}
         isDisabled={false}
         isLoading={true}
         isClearable={false}
@@ -30,6 +32,7 @@ const FormSelect = ({ name, label, options, defaultValue }) => {
         name={name}
         id={name}
         options={options}
+        onChange={onChange}
       />
     </div>
   );

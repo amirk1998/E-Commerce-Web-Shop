@@ -45,7 +45,7 @@ function App() {
   }, []);
 
   // console.log(products);
-  console.log(cart);
+  // console.log(cart);
 
   return (
     <div className='App w-full h-full bg-gray-100 px-8 py-4'>

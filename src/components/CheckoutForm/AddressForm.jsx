@@ -2,13 +2,15 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import FormInput from '../common/FormInput';
 import { Spinner } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { commerce } from '../../lib/commerce';
+import FormSelect from '../common/FormSelect';
 
 const initialValues = {
   firstName: '',
   lastName: '',
-  address: '',
   email: '',
+  address: '',
   city: '',
   zipCode: '',
 };
@@ -20,12 +22,12 @@ const validationSchema = Yup.object({
   lastName: Yup.string()
     .required('Last Name is Required')
     .min(3, 'Last Name length is not valid'),
-  address: Yup.string()
-    .required('Address is Required')
-    .min(8, 'Address length is not valid'),
   email: Yup.string()
     .email('Invalid email format')
     .required('Email is Required'),
+  address: Yup.string()
+    .required('Address is Required')
+    .min(8, 'Address length is not valid'),
   city: Yup.string()
     .required('City is Required')
     .min(5, 'City length is not valid'),
@@ -35,17 +37,35 @@ const validationSchema = Yup.object({
     .nullable(),
 });
 
-const AddressForm = ({ isLoading }) => {
+const AddressForm = ({ isLoading, checkoutToken }) => {
   const [shippingCountries, setShippingCountries] = useState([]);
-  const [shippingCountry, setShippingCounrty] = useState('');
+  const [shippingCountry, setShippingCountry] = useState('');
   const [shippingAllSubdivision, setShippingAllSubdivision] = useState([]);
   const [shippingSubdivision, setShippingSubdivision] = useState('');
   const [shippingAllOptions, setShippingAllOptions] = useState([]);
   const [shippingOption, setShippingOption] = useState('');
 
-  const fetchShippingCoutries = async (checkoutTokenId) => {
-    //
+  const countries = Object.entries(shippingCountries).map(([code, name]) => ({
+    value: code,
+    label: name,
+  }));
+  console.log(countries);
+
+  // countries && setShippingCountry(countries[0]?.value);
+
+  const fetchShippingCountries = async (checkoutTokenId) => {
+    const { countries } = await commerce.services.localeListShippingCountries(
+      checkoutTokenId
+    );
+    setShippingCountries(countries);
+    setShippingCountry(Object.keys(countries)[0]);
   };
+
+  useEffect(() => {
+    fetchShippingCountries(checkoutToken?.id);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onSubmit = (values) => {
     console.log(values);
@@ -60,7 +80,7 @@ const AddressForm = ({ isLoading }) => {
 
   if (isLoading) {
     return (
-      <div className='flex items-center justify-center'>
+      <div className='flex items-center justify-center h-full'>
         <Spinner size='xl' color='blue.500' />
       </div>
     );
@@ -78,14 +98,20 @@ const AddressForm = ({ isLoading }) => {
       >
         <FormInput name='firstName' label='First Name' formik={formik} />
         <FormInput name='lastName' label='Last Name' formik={formik} />
-        <FormInput name='address' label='Address' formik={formik} />
         <FormInput name='email' label='Email' type='email' formik={formik} />
+        <FormInput name='address' label='Address' formik={formik} />
         <FormInput name='city' label='City' formik={formik} />
         <FormInput
           name='zipCode'
           label='Zip Code / Postal Code'
           type='number'
           formik={formik}
+        />
+        <FormSelect
+          name='shippingCountry'
+          label='Shipping Country'
+          options={countries}
+          onChange={(selectValue) => setShippingCountry(selectValue.value)}
         />
       </form>
     </div>

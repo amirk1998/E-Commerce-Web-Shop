@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import AddressForm from '../AddressForm';
 import PaymentForm from '../PaymentForm';
 import { commerce } from '../../../lib/commerce';
+import { Spinner } from '@chakra-ui/react';
 
 const Checkout = ({ cart }) => {
   const [activeStep, setActiveStep] = useState(1);
@@ -15,35 +16,33 @@ const Checkout = ({ cart }) => {
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 3000); // set loading to false after 3 seconds
+  }, []);
 
+  useEffect(() => {
     const generateToken = async () => {
       try {
-        const fetchedCart = await commerce.cart.retrieve();
-        if (fetchedCart.id) {
-          const token = await commerce.checkout.generateToken(
-            'cart',
-            fetchedCart.id
-          );
-          console.log(token);
-          setCheckoutToken(token);
-        }
+        const cartId = commerce.cart.id();
+        const token = await commerce.checkout.generateToken(cartId, {
+          type: 'cart',
+        });
+        setCheckoutToken(token);
       } catch (error) {
         console.log(error);
       }
     };
 
-    // generateToken();
-  }, []);
+    generateToken();
+  }, [cart]);
 
-  const handleStepper = () => {
-    if (activeStep === 1) {
-      setIsLoading(true);
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    } else {
-      setIsLoading(true);
-      setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    }
-  };
+  // const handleStepper = () => {
+  //   if (activeStep < 3) {
+  //     setIsLoading(true);
+  //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  //   } else if (activeStep > 1) {
+  //     setIsLoading(true);
+  //     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  //   }
+  // };
 
   const Confirmation = () => {
     return <div>Confirmation</div>;
@@ -51,11 +50,19 @@ const Checkout = ({ cart }) => {
 
   const Form = () => {
     return activeStep === 1 ? (
-      <AddressForm isLoading={isLoading} />
+      <AddressForm isLoading={isLoading} checkoutToken={checkoutToken} />
     ) : (
       <PaymentForm isLoading={isLoading} />
     );
   };
+
+  // if (!checkoutToken) {
+  //   return (
+  //     <div className='flex items-center justify-center'>
+  //       <Spinner size='xl' color='blue.500' />
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className='flex flex-col items-center justify-center w-full'>
@@ -72,7 +79,7 @@ const Checkout = ({ cart }) => {
                 } `}
               >
                 {step.id}
-                {/* {activeStep === steps.length ? (
+                {activeStep === steps.length + 1 && (
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
@@ -87,9 +94,7 @@ const Checkout = ({ cart }) => {
                       d='M4.5 12.75l6 6 9-13.5'
                     />
                   </svg>
-                ) : (
-                  step.id
-                )} */}
+                )}
               </span>
               <p
                 className={`ml-2 text-xl ${
@@ -105,11 +110,7 @@ const Checkout = ({ cart }) => {
         })}
       </div>
 
-      {activeStep === steps.length ? <Confirmation /> : <Form />}
-
-      {/* <button onClick={handleStepper}>
-        {activeStep === 1 ? 'Next' : 'Prev'}
-      </button> */}
+      {activeStep === steps.length + 1 ? <Confirmation /> : <Form />}
     </div>
   );
 };
