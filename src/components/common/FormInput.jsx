@@ -3,7 +3,7 @@ const FormInput = ({ label, name, formik, type = 'text' }) => {
     <div className='flex flex-col'>
       <label
         htmlFor='name'
-        className='block mb-2 text-lg font-medium text-gray-900'
+        className='block mb-2 text-lg font-medium text-slate-800'
       >
         {label}
       </label>
@@ -12,7 +12,7 @@ const FormInput = ({ label, name, formik, type = 'text' }) => {
         id={name}
         name={name}
         {...formik.getFieldProps(name)}
-        className={`bg-gray-100 border-2 text-gray-900 text-lg rounded-lg focus:border-blue-500 focus:outline-none block w-full p-2.5 ${
+        className={`bg-gray-100 border-2 text-slate-800 text-lg rounded-lg focus:border-blue-500 focus:outline-none block w-full p-2.5 ${
           formik.errors[name] && formik.touched[name]
             ? 'border-red-500'
             : 'border-gray-300'

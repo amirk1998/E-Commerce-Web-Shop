@@ -2,6 +2,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import FormInput from '../common/FormInput';
 import { Spinner } from '@chakra-ui/react';
+import { useState } from 'react';
 
 const initialValues = {
   firstName: '',
@@ -35,7 +36,17 @@ const validationSchema = Yup.object({
 });
 
 const AddressForm = ({ isLoading }) => {
-  //
+  const [shippingCountries, setShippingCountries] = useState([]);
+  const [shippingCountry, setShippingCounrty] = useState('');
+  const [shippingAllSubdivision, setShippingAllSubdivision] = useState([]);
+  const [shippingSubdivision, setShippingSubdivision] = useState('');
+  const [shippingAllOptions, setShippingAllOptions] = useState([]);
+  const [shippingOption, setShippingOption] = useState('');
+
+  const fetchShippingCoutries = async (checkoutTokenId) => {
+    //
+  };
+
   const onSubmit = (values) => {
     console.log(values);
   };

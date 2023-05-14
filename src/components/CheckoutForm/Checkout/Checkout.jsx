@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import AddressForm from '../AddressForm';
 import PaymentForm from '../PaymentForm';
+import { commerce } from '../../../lib/commerce';
 
-const Checkout = () => {
+const Checkout = ({ cart }) => {
   const [activeStep, setActiveStep] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [checkoutToken, setCheckoutToken] = useState(null);
 
   const steps = [
     { id: 1, title: 'Shipping Address' },
@@ -13,6 +15,24 @@ const Checkout = () => {
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 3000); // set loading to false after 3 seconds
+
+    const generateToken = async () => {
+      try {
+        const fetchedCart = await commerce.cart.retrieve();
+        if (fetchedCart.id) {
+          const token = await commerce.checkout.generateToken(
+            'cart',
+            fetchedCart.id
+          );
+          console.log(token);
+          setCheckoutToken(token);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    // generateToken();
   }, []);
 
   const handleStepper = () => {
