@@ -41,6 +41,7 @@ const Checkout = ({ cart }) => {
   const handlerNext = (data) => {
     setShippingData(data);
     nextStep();
+    console.log(data);
   };
 
   const Confirmation = () => {
@@ -48,15 +49,19 @@ const Checkout = ({ cart }) => {
   };
 
   const Form = () => {
-    return activeStep === 1 ? (
-      <AddressForm
-        isLoading={isLoading}
-        checkoutToken={checkoutToken}
-        handlerNext={handlerNext}
-      />
-    ) : (
-      <PaymentForm isLoading={isLoading} />
-    );
+    if (activeStep === 1) {
+      return (
+        <AddressForm
+          isLoading={isLoading}
+          checkoutToken={checkoutToken}
+          handlerNext={handlerNext}
+        />
+      );
+    } else if (activeStep === 2) {
+      return (
+        <PaymentForm isLoading={isLoading} checkoutToken={checkoutToken} />
+      );
+    }
   };
 
   // if (!checkoutToken) {

@@ -2,7 +2,7 @@ const FormInput = ({ label, name, formik, type = 'text' }) => {
   return (
     <div className='flex flex-col'>
       <label
-        htmlFor='name'
+        htmlFor={name}
         className='block mb-2 text-lg font-medium text-slate-800'
       >
         {label}
