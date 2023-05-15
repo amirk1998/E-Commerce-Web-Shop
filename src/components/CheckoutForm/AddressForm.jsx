@@ -35,30 +35,66 @@ const validationSchema = Yup.object({
     .required('Zip Code is Required')
     .matches(/^[0-9]{5}$/, 'Invalid Zip Code')
     .nullable(),
+  shippingCountry: Yup.string().required('Select Shipping Country'),
+  shippingSubdivisions: Yup.string().required('Select Shipping Subdivisions'),
 });
 
 const AddressForm = ({ isLoading, checkoutToken }) => {
   const [shippingCountries, setShippingCountries] = useState([]);
   const [shippingCountry, setShippingCountry] = useState('');
-  const [shippingAllSubdivision, setShippingAllSubdivision] = useState([]);
+  const [allShippingSubdivisions, setAllShippingSubdivisions] = useState([]);
   const [shippingSubdivision, setShippingSubdivision] = useState('');
-  const [shippingAllOptions, setShippingAllOptions] = useState([]);
+  const [allShippingOptions, setAllShippingOptions] = useState([]);
   const [shippingOption, setShippingOption] = useState('');
 
   const countries = Object.entries(shippingCountries).map(([code, name]) => ({
     value: code,
     label: name,
   }));
-  console.log(countries);
+  const subdivisions = Object.entries(allShippingSubdivisions).map(
+    ([code, name]) => ({
+      value: code,
+      label: name,
+    })
+  );
 
-  // countries && setShippingCountry(countries[0]?.value);
+  const options = allShippingOptions.map((option) => ({
+    value: option.id,
+    label: `${option.description} - (${option.price.formatted_with_symbol})`,
+  }));
+
+  // console.log(countries);
+  // console.log(subdivisions);
 
   const fetchShippingCountries = async (checkoutTokenId) => {
     const { countries } = await commerce.services.localeListShippingCountries(
       checkoutTokenId
     );
+    console.log(countries);
     setShippingCountries(countries);
     setShippingCountry(Object.keys(countries)[0]);
+  };
+
+  const fetchSubdivisions = async (countryCode) => {
+    const { subdivisions } = await commerce.services.localeListSubdivisions(
+      countryCode
+    );
+    setAllShippingSubdivisions(subdivisions);
+    setShippingSubdivision(Object.keys(subdivisions)[0]);
+  };
+
+  const fetchShippingOptions = async (
+    checkoutTokenId,
+    country,
+    region = null
+  ) => {
+    const options = await commerce.checkout.getShippingOptions(
+      checkoutTokenId,
+      { country, region }
+    );
+    console.log(options);
+    setAllShippingOptions(options);
+    setShippingOption(options[0].id);
   };
 
   useEffect(() => {
@@ -66,6 +102,20 @@ const AddressForm = ({ isLoading, checkoutToken }) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    shippingCountry && fetchSubdivisions(shippingCountry);
+  }, [shippingCountry]);
+
+  useEffect(() => {
+    shippingSubdivision &&
+      fetchShippingOptions(
+        checkoutToken.id,
+        shippingCountry,
+        shippingSubdivision
+      );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shippingSubdivision]);
 
   const onSubmit = (values) => {
     console.log(values);
@@ -107,11 +157,35 @@ const AddressForm = ({ isLoading, checkoutToken }) => {
           type='number'
           formik={formik}
         />
+
         <FormSelect
           name='shippingCountry'
           label='Shipping Country'
           options={countries}
-          onChange={(selectValue) => setShippingCountry(selectValue.value)}
+          onChange={(selectedOption) => {
+            setShippingCountry(selectedOption.value);
+            console.log(selectedOption);
+          }}
+        />
+
+        <FormSelect
+          name='shippingSubdivisions'
+          label='Shipping Subdivisions'
+          options={subdivisions}
+          onChange={(selectedOption) => {
+            setShippingSubdivision(selectedOption.value);
+            console.log(selectedOption);
+          }}
+        />
+
+        <FormSelect
+          name='shippingOptions'
+          label='Shipping Options'
+          options={options}
+          onChange={(selectedOption) => {
+            setShippingOption(selectedOption.value);
+            console.log(selectedOption);
+          }}
         />
       </form>
     </div>
