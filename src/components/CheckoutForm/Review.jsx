@@ -25,7 +25,6 @@ const Review = ({ checkoutToken }) => {
             );
           })}
         <div className='flex flex-col py-2'>
-          <hr className='border-slate-200 border-2' />
           <p className='font-semibold text-lg text-slate-800'>Total</p>
           <p className='font-bold text-lg text-slate-800'>
             {checkoutToken.subtotal.formatted_with_symbol}
