@@ -8,6 +8,7 @@ const Checkout = ({ cart }) => {
   const [activeStep, setActiveStep] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [checkoutToken, setCheckoutToken] = useState(null);
+  const [shippingData, setShippingData] = useState({});
 
   const steps = [
     { id: 1, title: 'Shipping Address' },
@@ -34,15 +35,13 @@ const Checkout = ({ cart }) => {
     generateToken();
   }, [cart]);
 
-  // const handleStepper = () => {
-  //   if (activeStep < 3) {
-  //     setIsLoading(true);
-  //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  //   } else if (activeStep > 1) {
-  //     setIsLoading(true);
-  //     setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  //   }
-  // };
+  const nextStep = () => setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  const backStep = () => setActiveStep((prevActiveStep) => prevActiveStep - 1);
+
+  const handlerNext = (data) => {
+    setShippingData(data);
+    nextStep();
+  };
 
   const Confirmation = () => {
     return <div>Confirmation</div>;
@@ -50,7 +49,11 @@ const Checkout = ({ cart }) => {
 
   const Form = () => {
     return activeStep === 1 ? (
-      <AddressForm isLoading={isLoading} checkoutToken={checkoutToken} />
+      <AddressForm
+        isLoading={isLoading}
+        checkoutToken={checkoutToken}
+        handlerNext={handlerNext}
+      />
     ) : (
       <PaymentForm isLoading={isLoading} />
     );

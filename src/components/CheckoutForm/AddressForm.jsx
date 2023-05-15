@@ -5,6 +5,7 @@ import { Spinner } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { commerce } from '../../lib/commerce';
 import FormSelect from '../common/FormSelect';
+import { Link } from 'react-router-dom';
 
 const initialValues = {
   firstName: '',
@@ -39,7 +40,7 @@ const validationSchema = Yup.object({
   shippingSubdivisions: Yup.string().required('Select Shipping Subdivisions'),
 });
 
-const AddressForm = ({ isLoading, checkoutToken }) => {
+const AddressForm = ({ isLoading, checkoutToken, handlerNext }) => {
   const [shippingCountries, setShippingCountries] = useState([]);
   const [shippingCountry, setShippingCountry] = useState('');
   const [allShippingSubdivisions, setAllShippingSubdivisions] = useState([]);
@@ -92,7 +93,6 @@ const AddressForm = ({ isLoading, checkoutToken }) => {
       checkoutTokenId,
       { country, region }
     );
-    console.log(options);
     setAllShippingOptions(options);
     setShippingOption(options[0].id);
   };
@@ -117,8 +117,13 @@ const AddressForm = ({ isLoading, checkoutToken }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shippingSubdivision]);
 
-  const onSubmit = (values) => {
-    console.log(values);
+  const onSubmit = (data) => {
+    handlerNext({
+      ...data,
+      shippingCountry,
+      setShippingSubdivision,
+      shippingOption,
+    });
   };
 
   const formik = useFormik({
@@ -164,7 +169,6 @@ const AddressForm = ({ isLoading, checkoutToken }) => {
           options={countries}
           onChange={(selectedOption) => {
             setShippingCountry(selectedOption.value);
-            console.log(selectedOption);
           }}
         />
 
@@ -174,7 +178,6 @@ const AddressForm = ({ isLoading, checkoutToken }) => {
           options={subdivisions}
           onChange={(selectedOption) => {
             setShippingSubdivision(selectedOption.value);
-            console.log(selectedOption);
           }}
         />
 
@@ -184,10 +187,21 @@ const AddressForm = ({ isLoading, checkoutToken }) => {
           options={options}
           onChange={(selectedOption) => {
             setShippingOption(selectedOption.value);
-            console.log(selectedOption);
           }}
         />
       </form>
+      <div className='flex items-center justify-between mt-10 w-full'>
+        <Link to='/cart'>
+          <button className='text-gray-900  border-2 border-gray-300 hover:bg-slate-200 hover:border-gray-400 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-base px-5 py-2.5 text-center mr-2 mb-2 '>
+            Back to Cart
+          </button>
+        </Link>
+        <Link>
+          <button className='text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-base px-5 py-2.5 mr-2 mb-2 focus:outline-none'>
+            Next
+          </button>
+        </Link>
+      </div>
     </div>
   );
 };
