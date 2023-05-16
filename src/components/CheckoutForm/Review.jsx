@@ -27,7 +27,7 @@ const Review = ({ checkoutToken }) => {
         <div className='flex flex-col py-2'>
           <p className='font-semibold text-lg text-slate-800'>Total</p>
           <p className='font-bold text-lg text-slate-800'>
-            {checkoutToken.subtotal.formatted_with_symbol}
+            {checkoutToken && checkoutToken?.subtotal?.formatted_with_symbol}
           </p>
         </div>
       </ul>

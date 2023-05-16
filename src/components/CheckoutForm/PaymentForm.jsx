@@ -10,7 +10,60 @@ import { Spinner } from '@chakra-ui/react';
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 const stripePromise = loadStripe(STRIPE_KEY);
 
-const PaymentForm = ({ isLoading, checkoutToken, backStep }) => {
+const PaymentForm = ({
+  isLoading,
+  checkoutToken,
+  shippingData,
+  backStep,
+  nextStep,
+  onCaptureCheckout,
+}) => {
+  const handleSubmit = async (event, elements, stripe) => {
+    event.preventDefault();
+
+    if (!stripe || !elements) return;
+
+    const cardElement = elements.getElement(CardElement);
+    const { error, paymentMethod } = await stripe.createPaymentMethod({
+      type: 'card',
+      card: cardElement,
+    });
+
+    if (error) {
+      console.log(error);
+    } else {
+      const orderData = {
+        line_items: checkoutToken.line_items,
+        customer: {
+          first_name: shippingData.firstName,
+          last_name: shippingData.lastName,
+          email: shippingData.email,
+        },
+        shipping: {
+          name: 'Primary',
+          street: shippingData.address,
+          town_city: shippingData.city,
+          county_state: shippingData.shippingSubdivision,
+          postal_zip_code: shippingData.zipCode.toString(),
+          country: shippingData.shippingCountry,
+        },
+        fulfillment: {
+          shipping_method: shippingData.shippingOption,
+        },
+        payment: {
+          gateway: 'stripe',
+          stripe: {
+            payment_method_id: paymentMethod.id,
+          },
+        },
+      };
+
+      onCaptureCheckout(checkoutToken.id, orderData);
+
+      nextStep();
+    }
+  };
+
   if (isLoading) {
     return (
       <div className='flex items-center justify-center h-full'>
@@ -29,8 +82,25 @@ const PaymentForm = ({ isLoading, checkoutToken, backStep }) => {
       <Elements stripe={stripePromise}>
         <ElementsConsumer>
           {({ elements, stripe }) => (
-            <form>
-              <CardElement />
+            <form onSubmit={(e) => handleSubmit(e, elements, stripe)}>
+              <div className='border-2 border-slate-400 rounded-lg py-4 px-4 hover:border-blue-500'>
+                <CardElement
+                  options={{
+                    style: {
+                      base: {
+                        fontSize: '18px',
+                        color: '#1e293b',
+                        '::placeholder': {
+                          color: '#aab7c4',
+                        },
+                      },
+                      invalid: {
+                        color: '#ef4444',
+                      },
+                    },
+                  }}
+                />
+              </div>
               <br />
               <br />
               <div>
@@ -42,10 +112,10 @@ const PaymentForm = ({ isLoading, checkoutToken, backStep }) => {
                 </button>
                 <button
                   type='submit'
-                  disabled={!stripe}
+                  // disabled={!stripe}
                   className='text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-base px-5 py-2.5 mr-2 mb-2 focus:outline-none'
                 >
-                  Pay {checkoutToken.subtotal.formatted_with_symbol}
+                  Pay {checkoutToken?.subtotal?.formatted_with_symbol}
                 </button>
               </div>
             </form>

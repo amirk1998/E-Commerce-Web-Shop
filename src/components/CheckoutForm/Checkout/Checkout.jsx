@@ -4,7 +4,7 @@ import PaymentForm from '../PaymentForm';
 import { commerce } from '../../../lib/commerce';
 import { Spinner } from '@chakra-ui/react';
 
-const Checkout = ({ cart }) => {
+const Checkout = ({ cart, order, onCaptureCheckout, error }) => {
   const [activeStep, setActiveStep] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [checkoutToken, setCheckoutToken] = useState(null);
@@ -62,7 +62,10 @@ const Checkout = ({ cart }) => {
         <PaymentForm
           isLoading={isLoading}
           checkoutToken={checkoutToken}
+          shippingData={shippingData}
           backStep={backStep}
+          nextStep={nextStep}
+          onCaptureCheckout={onCaptureCheckout}
         />
       );
     }
