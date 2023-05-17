@@ -3,6 +3,7 @@ import AddressForm from '../AddressForm';
 import PaymentForm from '../PaymentForm';
 import { commerce } from '../../../lib/commerce';
 import { Spinner } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
 
 const Checkout = ({ cart, order, onCaptureCheckout, error }) => {
   const [activeStep, setActiveStep] = useState(1);
@@ -45,8 +46,43 @@ const Checkout = ({ cart, order, onCaptureCheckout, error }) => {
   };
 
   const Confirmation = () => {
-    return <div>Confirmation</div>;
+    return (
+      <>
+        {order.customer ? (
+          <div className='flex flex-col items-center justify-center w-full'>
+            <h1 className='text-2xl font-semibold text-slate-800'>
+              Thank you for your purchase
+            </h1>
+            <hr className='border-slate-200 border-2 mt-2' />
+            <p className='text-xl font-medium text-slate-800'>Order ref : </p>
+            <br />
+            <Link to='/'>
+              <button className='text-gray-900  border-2 border-gray-300 hover:bg-slate-200 hover:border-gray-400 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-base px-5 py-2.5 text-center mr-2 mb-2 '>
+                Back To Home
+              </button>
+            </Link>
+          </div>
+        ) : (
+          <div className='flex items-center justify-center h-full'>
+            <Spinner size='xl' color='blue.500' />
+          </div>
+        )}
+      </>
+    );
   };
+
+  if (error) {
+    return (
+      <div className='flex flex-col items-center justify-center w-full gap-y-8'>
+        <p className='text-red-500 font-medium text-xl'>Error : {error}</p>
+        <Link to='/'>
+          <button className='text-gray-900  border-2 border-gray-300 hover:bg-slate-200 hover:border-gray-400 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-base px-5 py-2.5 text-center mr-2 mb-2 '>
+            Back To Home
+          </button>
+        </Link>
+      </div>
+    );
+  }
 
   const Form = () => {
     if (activeStep === 1) {

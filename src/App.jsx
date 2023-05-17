@@ -52,9 +52,11 @@ function App() {
         checkoutTokenId,
         newOrder
       );
+      console.log(incomingOrder);
       setOrder(incomingOrder);
       refreshCart();
     } catch (error) {
+      console.log(error);
       console.log(error.data.error.message);
       setErrorMessage(error.data.error.message);
     }

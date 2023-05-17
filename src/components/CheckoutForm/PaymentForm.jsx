@@ -53,7 +53,7 @@ const PaymentForm = ({
         payment: {
           gateway: 'stripe',
           stripe: {
-            payment_method_id: paymentMethod.id,
+            payment_method_id: paymentMethod?.id,
           },
         },
       };
